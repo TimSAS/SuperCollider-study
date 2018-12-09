@@ -30,3 +30,8 @@ x = Synth.new(\kick);
 //tom
 
 //hat
+
+
+//most common 4 sounds: kick, snare, tom, hat
+//sounds to research: crash cymbal, ride cymbal, closed/open hihat, hadclap, rim shoot, low/mid/high tom,
+//bass drum, snare drum, kick, snare, cow... hmm quite a few drum/percussion sounds =)
