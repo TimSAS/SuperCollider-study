@@ -4,17 +4,13 @@
 //n different synths with controls, but double that(or maybe quadruple if 4 voices), so I can have for instance two "kicks" that are different in tone
 
 s.boot;
-s.quit;
 
-s.meter;
-s.plotTree;
-s.makeWindow();
 
 //kick drum
 (
 SynthDef.new(\kick,{
-	arg freqA=500, freqB=70, freqC=30, freqDur1=0.01, freqDur2=0.2, freqC1=1, freqC2=(-1),
-	atk=0.02, rel=1.5, c1=1, c2=(-12), amp=1, pan=0, out=0;
+	arg freqA=500, freqB=70, freqC=50, freqDur1=0.01, freqDur2=0.2, freqC1=1, freqC2=(-1),
+	atk=0.02, rel=0.5, c1=1, c2=(-8), amp=1, pan=0, out=0;
 	var sig, env, freqSweep;
 	freqSweep = Env([freqA, freqB, freqB], [freqDur1, freqDur2], [freqC1, freqC2]).ar;
 	env = Env([0,1,0], [atk,rel], [c1,c2]).kr(2);
@@ -45,7 +41,7 @@ SynthDef.new(\tom, {
 	arg out = 0, amp = 1, pan = 0;
 	var env, sig;
 	env = EnvGen.kr(Env.perc(0.01, 0.5, 1, -5), 1);
-	sig = SinOsc.ar(200);
+	sig = SinOsc.ar(140);
 	sig = Pan2.ar(sig*env, pan, amp);
 	Out.ar(out, sig);
 }).add;
