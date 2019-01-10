@@ -11,6 +11,7 @@ MIDIIn.connectAll;
 MIDIClient.sources; //all MIDI sources in array
 MIDIIn.connect(); //if connecting a specific MIDI device
 
+//for handling drums:
 (
 MIDIdef.noteOn(\noteOnTest, {
 	arg vel, nn, chan, src;
@@ -22,8 +23,17 @@ MIDIdef.noteOn(\noteOnTest, {
 		39, {Synth.new(\tom);}
 	);
 
+}, chan:9);
+)
+
+//for handling some extra setting changes (control portion of sequencer):
+(
+MIDIdef.cc(\ccMessages, {
+	arg key, func, ccNum, chan, srcID, argTemplate, dispatcher;
+	[key, func, ccNum, chan, srcID, argTemplate, dispatcher].postln();
 });
 )
+
 
 MIDIdef(\noteOnTest).permanent_(true);
 MIDIdef.freeAll;
