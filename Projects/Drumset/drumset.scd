@@ -4,10 +4,37 @@
 //n different synths with controls, but double that(or maybe quadruple if 4 voices), so I can have for instance two "kicks" that are different in tone
 
 s.boot;
+s.quit;
+
+( //initialize and connect MIDI
+MIDIClient.init;
+MIDIIn.connectAll;
+)
+
+( //MIDI related functions
+//for handling drums:
+MIDIdef.noteOn(\noteOnTest, {
+	arg vel, nn, chan, src;
+	[vel, nn, chan, src].postln;
+	switch(nn,
+		36, {Synth.new(\kick, [\rel, vel.linexp(0, 127, 0.2, 2)]);},
+		37, {Synth.new(\snare);},
+		38, {Synth.new(\hihat);},
+		39, {Synth.new(\tom);}
+	);
+
+}, chan:9);
+
+//for handling some extra setting changes (control portion of sequencer):
+MIDIdef.cc(\ccMessages, {
+	arg key, func, ccNum, chan, srcID, argTemplate, dispatcher;
+	[key, func, ccNum, chan, srcID, argTemplate, dispatcher].postln();
+});
+)
 
 
+( //initialize all drum instruments
 //kick drum
-(
 SynthDef.new(\kick,{
 	arg freqA=500, freqB=70, freqC=50, freqDur1=0.01, freqDur2=0.2, freqC1=1, freqC2=(-1),
 	atk=0.02, rel=0.5, c1=1, c2=(-8), amp=1, pan=0, out=0;
@@ -19,11 +46,8 @@ SynthDef.new(\kick,{
 	sig = Pan2.ar(sig, pan, amp);
 	Out.ar(out, sig);
 }).add;
-)
-
 
 //snare
-(
 SynthDef.new(\snare, {
 	arg out = 0, amp = 1, sinfreq = 180, att = 0.01, rel = 0.2, ffreq = 2000, pan = 0;
 	var snd1 = WhiteNoise.ar(amp - 0.5);
@@ -32,24 +56,18 @@ SynthDef.new(\snare, {
 	var sum = HPF.ar(snd1 * env, ffreq)+(snd2*env);
 	Out.ar(out, Pan2.ar(sum, pan));
 }).add;
-)
-
 
 //tom
-(
 SynthDef.new(\tom, {
 	arg out = 0, amp = 1, pan = 0;
 	var env, sig;
-	env = EnvGen.kr(Env.perc(0.01, 0.5, 1, -5), 1);
+	env = EnvGen.kr(Env.perc(0.01, 0.6, 1, -5), 1);
 	sig = SinOsc.ar(140);
 	sig = Pan2.ar(sig*env, pan, amp);
 	Out.ar(out, sig);
 }).add;
-)
-
 
 //hihat
-(
 SynthDef.new(\hihat, {
 	arg out = 0, amp = 1, att = 0.01, rel = 0.2, ffreq = 6000, pan = 0;
 	var snd = WhiteNoise.ar(amp);
@@ -64,4 +82,5 @@ x = Synth.new(\kick);
 y = Synth.new(\snare);
 z = Synth.new(\tom);
 i = Synth.new(\hihat);
+
 
