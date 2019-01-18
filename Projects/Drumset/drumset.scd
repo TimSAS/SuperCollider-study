@@ -16,12 +16,14 @@ MIDIIn.connectAll;
 MIDIdef.noteOn(\noteOnTest, {
 	arg vel, nn, chan, src;
 	[vel, nn, chan, src].postln;
+	//drums
 	switch(nn,
-		36, {Synth.new(\kick, [\rel, vel.linexp(0, 127, 0.2, 2)]);},
-		37, {Synth.new(\snare);},
-		38, {Synth.new(\hihat);},
-		39, {Synth.new(\tom);}
+		36, {Synth.new(\kick, [\amp, vel.linexp(0, 127, 0, 1)]);},
+		37, {Synth.new(\snare, [\amp, vel.linexp(0, 127, 0, 1)]);},
+		38, {Synth.new(\hihat, [\amp, vel.linexp(0, 127, 0, 1)]);},
+		39, {Synth.new(\tom, [\amp, vel.linexp(0, 127, 0, 1)]);}
 	);
+	//add metronome here?
 
 }, chan:9);
 
@@ -37,7 +39,7 @@ MIDIdef.cc(\ccMessages, {
 //kick drum
 SynthDef.new(\kick,{
 	arg freqA=500, freqB=70, freqC=50, freqDur1=0.01, freqDur2=0.2, freqC1=1, freqC2=(-1),
-	atk=0.02, rel=0.5, c1=1, c2=(-8), amp=1, pan=0, out=0;
+	atk=0.02, rel=1.5, c1=1, c2=(-8), amp=1, pan=0, out=0;
 	var sig, env, freqSweep;
 	freqSweep = Env([freqA, freqB, freqB], [freqDur1, freqDur2], [freqC1, freqC2]).ar;
 	env = Env([0,1,0], [atk,rel], [c1,c2]).kr(2);
