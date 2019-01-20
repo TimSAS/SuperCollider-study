@@ -4,12 +4,13 @@
 //n different synths with controls, but double that(or maybe quadruple if 4 voices), so I can have for instance two "kicks" that are different in tone
 
 s.boot;
+s.plotTree;
 s.quit;
 
-( //initialize and connect MIDI
 MIDIClient.init;
+MIDIClient.sources;
+MIDIIn.connect(0);
 MIDIIn.connectAll;
-)
 
 ( //MIDI related functions
 //for handling drums:
@@ -18,13 +19,13 @@ MIDIdef.noteOn(\noteOnTest, {
 	[vel, nn, chan, src].postln;
 	//drums
 	switch(nn,
-		36, {Synth.new(\kick, [\amp, vel.linexp(0, 127, 0, 1)]);},
-		37, {Synth.new(\snare, [\amp, vel.linexp(0, 127, 0, 1)]);},
-		38, {Synth.new(\hihat, [\amp, vel.linexp(0, 127, 0, 1)]);},
-		39, {Synth.new(\tom, [\amp, vel.linexp(0, 127, 0, 1)]);}
+		36, {Synth.new(\kick, [\amp, vel.linexp(0,127,0.01,1)]);},
+		37, {Synth.new(\snare, [\amp, vel.linexp(0,127,0.01,1)]);},
+		38, {Synth.new(\hihat, [\amp, vel.linexp(0,127,0.01,1)]);},
+		39, {Synth.new(\tom, [\amp, vel.linexp(0,127,0.01,1)]);}
 	);
-	//add metronome here?
 
+	//add stuff to handle the meter
 }, chan:9);
 
 //for handling some extra setting changes (control portion of sequencer):
@@ -38,7 +39,7 @@ MIDIdef.cc(\ccMessages, {
 ( //initialize all drum instruments
 //kick drum
 SynthDef.new(\kick,{
-	arg freqA=500, freqB=70, freqC=50, freqDur1=0.01, freqDur2=0.2, freqC1=1, freqC2=(-1),
+	arg freqA=300, freqB=70, freqC=50, freqDur1=0.01, freqDur2=0.2, freqC1=1, freqC2=(-1),
 	atk=0.02, rel=1.5, c1=1, c2=(-8), amp=1, pan=0, out=0;
 	var sig, env, freqSweep;
 	freqSweep = Env([freqA, freqB, freqB], [freqDur1, freqDur2], [freqC1, freqC2]).ar;
@@ -78,6 +79,7 @@ SynthDef.new(\hihat, {
 	Out.ar(out, Pan2.ar(snd, pan));
 }).add;
 )
+
 
 
 x = Synth.new(\kick);
