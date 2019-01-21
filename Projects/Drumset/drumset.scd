@@ -4,6 +4,7 @@
 //n different synths with controls, but double that(or maybe quadruple if 4 voices), so I can have for instance two "kicks" that are different in tone
 
 s.boot;
+s.volume = 5;
 s.plotTree;
 s.quit;
 
