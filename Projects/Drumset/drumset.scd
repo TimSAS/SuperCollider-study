@@ -5,6 +5,7 @@
 
 s.boot;
 s.volume = 1;
+s.meter;
 s.plotTree;
 s.quit;
 
@@ -13,6 +14,17 @@ MIDIClient.sources;
 MIDIIn.connect(0);
 MIDIIn.connectAll;
 
+( //global variables
+~drum1_pan = 0;
+~drum2_pan = 0;
+~drum3_pan = 0;
+~drum4_pan = 0;
+~drum5_pan = 0;
+~drum6_pan = 0;
+~drum7_pan = 0;
+~drum8_pan = 0;
+)
+
 ( //MIDI related functions
 //for handling drums:
 MIDIdef.noteOn(\noteOnTest, {
@@ -20,14 +32,14 @@ MIDIdef.noteOn(\noteOnTest, {
 	[vel, nn, chan, src].postln;
 	//drums
 	switch(nn,
-		44, {Synth.new(\snare, [\amp, vel.linexp(0,127,0.01,1)]);},
-		45, {Synth.new(\high_tom, [\amp, vel.linexp(0,127,0.01,1)]);},
-		46, {Synth.new(\medium_tom, [\amp, vel.linexp(0,127,0.01,1)]);},
-		47, {Synth.new(\low_tom, [\amp, vel.linexp(0,127,0.01,1)]);},
-		48, {Synth.new(\hihat, [\amp, vel.linexp(0,127,0.01,1)]);},
-		49, {Synth.new(\crash, [\amp, vel.linexp(0,127,0.01,1)]);},
-		50, {Synth.new(\ride, [\amp, vel.linexp(0,127,0.01,1)]);},
-		51, {Synth.new(\kick, [\amp, vel.linexp(0,127,0.01,1)]);},
+		44, {Synth.new(\snare, [\amp, vel.linexp(0,127,0.01,1), \pan, ~drum1_pan]);},
+		45, {Synth.new(\high_tom, [\amp, vel.linexp(0,127,0.01,1), \pan, ~drum2_pan]);},
+		46, {Synth.new(\medium_tom, [\amp, vel.linexp(0,127,0.01,1), \pan, ~drum3_pan]);},
+		47, {Synth.new(\low_tom, [\amp, vel.linexp(0,127,0.01,1), \pan, ~drum4_pan]);},
+		48, {Synth.new(\hihat, [\amp, vel.linexp(0,127,0.01,1), \pan, ~drum5_pan]);},
+		49, {Synth.new(\crash, [\amp, vel.linexp(0,127,0.01,1), \pan, ~drum6_pan]);},
+		50, {Synth.new(\ride, [\amp, vel.linexp(0,127,0.01,1), \pan, ~drum7_pan]);},
+		51, {Synth.new(\kick, [\amp, vel.linexp(0,127,0.01,1), \pan, ~drum8_pan]);}
 	);
 
 	//add stuff to handle the meter
@@ -37,6 +49,16 @@ MIDIdef.noteOn(\noteOnTest, {
 MIDIdef.cc(\ccMessages, {
 	arg key, func, ccNum, chan, srcID, argTemplate, dispatcher;
 	[key, func, ccNum, chan, srcID, argTemplate, dispatcher].postln();
+	switch(func,
+		1, {~drum1_pan = key.linlin(0, 127, -1, 1);},
+		2, {~drum2_pan = key.linlin(0, 127, -1, 1);},
+		3, {~drum3_pan = key.linlin(0, 127, -1, 1);},
+		4, {~drum4_pan = key.linlin(0, 127, -1, 1);},
+		5, {~drum5_pan = key.linlin(0, 127, -1, 1);},
+		6, {~drum6_pan = key.linlin(0, 127, -1, 1);},
+		7, {~drum7_pan = key.linlin(0, 127, -1, 1);},
+		8, {~drum8_pan = key.linlin(0, 127, -1, 1);},
+	)
 });
 )
 
@@ -93,12 +115,12 @@ SynthDef.new(\hihat, {
 
 //6. crash
 SynthDef.new(\crash, {
-
+arg out = 0, amp = 1, pan = 0;
 }).add;
 
 //7. ride
 SynthDef.new(\ride, {
-
+arg out = 0, amp = 1, pan = 0;
 }).add;
 
 //8. kick drum
@@ -118,13 +140,8 @@ SynthDef.new(\kick,{
 
 
 
-Synth.new(\snare);
-Synth.new(\high_tom);
-Synth.new(\medium_tom);
-Synth.new(\low_tom);
-Synth.new(\hihat);
-Synth.new(\crash);
-Synth.new(\ride);
-Synth.new(\kick);
+
+
+
 
 
