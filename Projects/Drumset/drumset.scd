@@ -4,7 +4,7 @@
 //n different synths with controls, but double that(or maybe quadruple if 4 voices), so I can have for instance two "kicks" that are different in tone
 
 s.boot;
-s.volume = 1;
+s.volume = 2;
 s.meter;
 s.plotTree;
 s.quit;
@@ -23,6 +23,14 @@ MIDIIn.connectAll;
 ~drum6_pan = 0;
 ~drum7_pan = 0;
 ~drum8_pan = 0;
+~drum1_2_pan = 0;
+~drum2_2_pan = 0;
+~drum3_2_pan = 0;
+~drum4_2_pan = 0;
+~drum5_2_pan = 0;
+~drum6_2_pan = 0;
+~drum7_2_pan = 0;
+~drum8_2_pan = 0;
 )
 
 ( //MIDI related functions
@@ -32,14 +40,22 @@ MIDIdef.noteOn(\noteOnTest, {
 	[vel, nn, chan, src].postln;
 	//drums
 	switch(nn,
-		44, {Synth.new(\snare, [\amp, vel.linexp(0,127,0.01,1), \pan, ~drum1_pan]);},
-		45, {Synth.new(\high_tom, [\amp, vel.linexp(0,127,0.01,1), \pan, ~drum2_pan]);},
-		46, {Synth.new(\medium_tom, [\amp, vel.linexp(0,127,0.01,1), \pan, ~drum3_pan]);},
-		47, {Synth.new(\low_tom, [\amp, vel.linexp(0,127,0.01,1), \pan, ~drum4_pan]);},
-		48, {Synth.new(\hihat, [\amp, vel.linexp(0,127,0.01,1), \pan, ~drum5_pan]);},
-		49, {Synth.new(\crash, [\amp, vel.linexp(0,127,0.01,1), \pan, ~drum6_pan]);},
-		50, {Synth.new(\ride, [\amp, vel.linexp(0,127,0.01,1), \pan, ~drum7_pan]);},
-		51, {Synth.new(\kick, [\amp, vel.linexp(0,127,0.01,1), \pan, ~drum8_pan]);}
+		44, {Synth.new(\snare, [\amp, vel.linexp(0,127,0.001,1), \pan, ~drum1_pan]);},
+		45, {Synth.new(\high_tom, [\amp, vel.linexp(0,127,0.001,1), \pan, ~drum2_pan]);},
+		46, {Synth.new(\medium_tom, [\amp, vel.linexp(0,127,0.001,1), \pan, ~drum3_pan]);},
+		47, {Synth.new(\low_tom, [\amp, vel.linexp(0,127,0.001,1), \pan, ~drum4_pan]);},
+		48, {Synth.new(\hihat, [\amp, vel.linexp(0,127,0.001,1), \pan, ~drum5_pan]);},
+		49, {Synth.new(\crash, [\amp, vel.linexp(0,127,0.001,1), \pan, ~drum6_pan]);},
+		50, {Synth.new(\ride, [\amp, vel.linexp(0,127,0.001,1), \pan, ~drum7_pan]);},
+		51, {Synth.new(\kick, [\amp, vel.linexp(0,127,0.001,1), \pan, ~drum8_pan]);},
+		36, {Synth.new(\snare, [\amp, vel.linexp(0,127,0.001,1), \pan, ~drum1_2_pan]);},
+		37, {Synth.new(\high_tom, [\amp, vel.linexp(0,127,0.001,1), \pan, ~drum2_2_pan]);},
+		38, {Synth.new(\medium_tom, [\amp, vel.linexp(0,127,0.001,1), \pan, ~drum3_2_pan]);},
+		39, {Synth.new(\low_tom, [\amp, vel.linexp(0,127,0.001,1), \pan, ~drum4_2_pan]);},
+		40, {Synth.new(\hihat, [\amp, vel.linexp(0,127,0.001,1), \pan, ~drum5_2_pan]);},
+		41, {Synth.new(\crash, [\amp, vel.linexp(0,127,0.001,1), \pan, ~drum6_2_pan]);},
+		42, {Synth.new(\ride, [\amp, vel.linexp(0,127,0.001,1), \pan, ~drum7_2_pan]);},
+		43, {Synth.new(\kick, [\amp, vel.linexp(0,127,0.001,1), \pan, ~drum8_2_pan]);}
 	);
 
 	//add stuff to handle the meter
@@ -58,6 +74,14 @@ MIDIdef.cc(\ccMessages, {
 		6, {~drum6_pan = key.linlin(0, 127, -1, 1);},
 		7, {~drum7_pan = key.linlin(0, 127, -1, 1);},
 		8, {~drum8_pan = key.linlin(0, 127, -1, 1);},
+		9, {~drum1_2_pan = key.linlin(0, 127, -1, 1);},
+		10, {~drum2_2_pan = key.linlin(0, 127, -1, 1);},
+		11, {~drum3_2_pan = key.linlin(0, 127, -1, 1);},
+		12, {~drum4_2_pan = key.linlin(0, 127, -1, 1);},
+		13, {~drum5_2_pan = key.linlin(0, 127, -1, 1);},
+		14, {~drum6_2_pan = key.linlin(0, 127, -1, 1);},
+		15, {~drum7_2_pan = key.linlin(0, 127, -1, 1);},
+		16, {~drum8_2_pan = key.linlin(0, 127, -1, 1);}
 	)
 });
 )
@@ -67,7 +91,7 @@ MIDIdef.cc(\ccMessages, {
 //1. snare
 SynthDef.new(\snare, {
 	arg out = 0, amp = 1, sinfreq = 180, att = 0.01, rel = 0.2, ffreq = 2000, pan = 0;
-	var snd1 = WhiteNoise.ar(amp - 0.5);
+	var snd1 = WhiteNoise.ar(amp/2);
 	var snd2 = SinOsc.ar(sinfreq,0,amp);
 	var env = EnvGen.kr(Env.perc(att, rel), doneAction: 2);
 	var sum = HPF.ar(snd1 * env, ffreq)+(snd2*env);
