@@ -4,7 +4,6 @@
 //n different synths with controls, but double that(or maybe quadruple if 4 voices), so I can have for instance two "kicks" that are different in tone
 
 s.boot;
-s.volume = 2;
 s.meter;
 s.plotTree;
 s.quit;
@@ -73,7 +72,7 @@ MIDIdef.cc(\ccMessages, {
 		5, {~drum5_pan = key.linlin(0, 127, -1, 1);},
 		6, {~drum6_pan = key.linlin(0, 127, -1, 1);},
 		7, {~drum7_pan = key.linlin(0, 127, -1, 1);},
-		8, {~drum8_pan = key.linlin(0, 127, -1, 1);},
+		8, {~drum8_pan = key.linlin(0, 127,-1, 1);},
 		9, {~drum1_2_pan = key.linlin(0, 127, -1, 1);},
 		10, {~drum2_2_pan = key.linlin(0, 127, -1, 1);},
 		11, {~drum3_2_pan = key.linlin(0, 127, -1, 1);},
@@ -160,6 +159,7 @@ SynthDef.new(\kick,{
 	Out.ar(out, sig);
 }).add;
 )
+
 
 
 
