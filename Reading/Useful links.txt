@@ -1,1 +1,2 @@
 http://www.zytrax.com/tech/audio/audio.html  -frequencies of different instruments, specifically drums
+http://www.mcld.co.uk/cymbalsynthesis/       -cymbal synthesis tutorial
