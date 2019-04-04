@@ -89,9 +89,9 @@ MIDIdef.cc(\ccMessages, {
 ( //initialize all drum instruments
 //1. snare
 SynthDef.new(\snare, {
-	arg out = 0, amp = 1, sinfreq = 180, att = 0.01, rel = 0.2, ffreq = 2000, pan = 0;
-	var snd1 = WhiteNoise.ar(amp/2);
-	var snd2 = SinOsc.ar(sinfreq,0,amp);
+	arg out = 0, amp = 1, sinfreq = 180, att = 0.01, rel = 0.13, ffreq = 2000, pan = 0;
+	var snd1 = WhiteNoise.ar(amp/4);
+	var snd2 = SinOsc.ar(sinfreq,0,amp/2);
 	var env = EnvGen.kr(Env.perc(att, rel), doneAction: 2);
 	var sum = HPF.ar(snd1 * env, ffreq)+(snd2*env);
 	Out.ar(out, Pan2.ar(sum, pan));
@@ -102,9 +102,9 @@ SynthDef.new(\high_tom, {
 	arg out = 0, amp = 1, pan = 0;
 	var env, sig;
 	env = EnvGen.kr(Env.perc(0.01, 0.6, 1, -5), 1, doneAction: 2);
-	sig = SinOsc.ar(140);
+	sig = SinOsc.ar(250);
 	sig = Pan2.ar(sig*env, pan, amp);
-	Out.ar(out, sig);
+	Out.ar(out, Pan2.ar(sig,pan));
 }).add;
 
 //3. medium tom
@@ -112,9 +112,9 @@ SynthDef.new(\medium_tom, {
 	arg out = 0, amp = 1, pan = 0;
 	var env, sig;
 	env = EnvGen.kr(Env.perc(0.01, 0.6, 1, -5), 1, doneAction: 2);
-	sig = SinOsc.ar(140);
+	sig = SinOsc.ar(200);
 	sig = Pan2.ar(sig*env, pan, amp);
-	Out.ar(out, sig);
+	Out.ar(out, Pan2.ar(sig,pan));
 }).add;
 
 //4. low tom
@@ -122,14 +122,14 @@ SynthDef.new(\low_tom, {
 	arg out = 0, amp = 1, pan = 0;
 	var env, sig;
 	env = EnvGen.kr(Env.perc(0.01, 0.6, 1, -5), 1, doneAction: 2);
-	sig = SinOsc.ar(140);
+	sig = SinOsc.ar(150);
 	sig = Pan2.ar(sig*env, pan, amp);
-	Out.ar(out, sig);
+	Out.ar(out, Pan2.ar(sig,pan));
 }).add;
 
 //5. hihat
 SynthDef.new(\hihat, {
-	arg out = 0, amp = 1, att = 0.01, rel = 0.2, ffreq = 6000, pan = 0;
+	arg out = 0, amp = 1, att = 0.02, rel = 0.13, ffreq = 9000, pan = 0;
 	var snd = WhiteNoise.ar(amp);
 	var env = Env.perc(att, rel).kr(doneAction: 2);
 	snd = HPF.ar(snd * env, ffreq);
@@ -138,7 +138,24 @@ SynthDef.new(\hihat, {
 
 //6. crash
 SynthDef.new(\crash, {
-arg out = 0, amp = 1, pan = 0;
+	arg out = 0, amp = 1, pan = 0;
+	var lodriver, locutoffenv, hidriver, hicutoffenv, freqs, res, thwack, sig;
+
+	locutoffenv = EnvGen.ar(Env.perc(0.25,5)) * 20000 + 10;
+	lodriver = LPF.ar(WhiteNoise.ar(0.1), locutoffenv);
+
+	hicutoffenv = 10001 - (EnvGen.ar(Env.perc(1,3)) * 10000);
+	hidriver = HPF.ar(WhiteNoise.ar(0.1), hicutoffenv);
+	hidriver = hidriver * EnvGen.ar(Env.perc(1,2,0.25));
+
+	thwack = EnvGen.ar(Env.perc(0.001, 0.001, 1));
+
+	freqs = {exprand(300, 20000)}.dup(100);
+	res = Ringz.ar(lodriver + hidriver + thwack, freqs).mean;
+
+	sig = amp * ((res * 1) + (lodriver * 2) + thwack).dup;
+	Out.ar(out, Pan2.ar(sig, pan));
+
 }).add;
 
 //7. ride
@@ -148,11 +165,11 @@ arg out = 0, amp = 1, pan = 0;
 
 //8. kick drum
 SynthDef.new(\kick,{
-	arg freqA=300, freqB=70, freqC=50, freqDur1=0.01, freqDur2=0.2, freqC1=1, freqC2=(-1),
-	atk=0.02, rel=1.5, c1=1, c2=(-8), amp=1, pan=0, out=0;
+	arg freqA=300, freqB=70, freqC=50, freqDur1=0.01, freqDur2=0.08, freqC1=0.5, freqC2=(-1),
+	atk=0.015, rel=0.55, c1=1, c2=(-8), amp=1, pan=0, out=0;
 	var sig, env, freqSweep;
 	freqSweep = Env([freqA, freqB, freqB], [freqDur1, freqDur2], [freqC1, freqC2]).ar;
-	env = Env([0,1,0], [atk,rel], [c1,c2]).kr(2);
+	env = Env([0,1,0], [atk,rel], [c1,c2]).kr(doneAction: 2);
 	sig = SinOsc.ar(freqSweep, pi/2);
 	sig = sig * env;
 	sig = Pan2.ar(sig, pan, amp);
@@ -160,8 +177,14 @@ SynthDef.new(\kick,{
 }).add;
 )
 
-
-
+Synth.new(\snare);
+Synth.new(\high_tom);     //need adjustments, probably take a snare drum as a base(inspiration)
+Synth.new(\medium_tom);   //need adjustments
+Synth.new(\low_tom);      //need adjustments
+Synth.new(\hihat);
+Synth.new(\crash);
+Synth.new(\ride);         //needs to be implemented
+Synth.new(\kick);
 
 
 
